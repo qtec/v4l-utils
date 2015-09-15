@@ -23,6 +23,7 @@
  */
 
 #include <string.h>
+#include <byteswap.h>
 #include "libv4lconvert-priv.h"
 
 #define RGB2Y(r, g, b, y) \
@@ -227,10 +228,11 @@ void v4lconvert_yuyv_to_bgr24(const unsigned char *src, unsigned char *dest,
 	}
 }
 
-void v4lconvert_yuyv_to_rgb24(const unsigned char *src, unsigned char *dest,
-		int width, int height, int stride)
+void v4lconvert_yuyv_to_rgbX(const unsigned char *src, unsigned char *dest,
+		int width, int height, int stride, int Xout)
 {
 	int j;
+	int jump = (Xout / 8) - 3;
 
 	while (--height >= 0) {
 		for (j = 0; j + 1 < width; j += 2) {
@@ -244,10 +246,12 @@ void v4lconvert_yuyv_to_rgb24(const unsigned char *src, unsigned char *dest,
 			*dest++ = CLIP(src[0] + v1);
 			*dest++ = CLIP(src[0] - rg);
 			*dest++ = CLIP(src[0] + u1);
+			dest += jump;
 
 			*dest++ = CLIP(src[2] + v1);
 			*dest++ = CLIP(src[2] - rg);
 			*dest++ = CLIP(src[2] + u1);
+			dest += jump;
 			src += 4;
 		}
 		src += stride - (width * 2);
@@ -376,10 +380,11 @@ void v4lconvert_uyvy_to_bgr24(const unsigned char *src, unsigned char *dest,
 	}
 }
 
-void v4lconvert_uyvy_to_rgb24(const unsigned char *src, unsigned char *dest,
-		int width, int height, int stride)
+void v4lconvert_uyvy_to_rgbX(const unsigned char *src, unsigned char *dest,
+		int width, int height, int stride, int Xout)
 {
 	int j;
+	int jump = (Xout / 8) - 3;
 
 	while (--height >= 0) {
 		for (j = 0; j + 1 < width; j += 2) {
@@ -393,10 +398,12 @@ void v4lconvert_uyvy_to_rgb24(const unsigned char *src, unsigned char *dest,
 			*dest++ = CLIP(src[1] + v1);
 			*dest++ = CLIP(src[1] - rg);
 			*dest++ = CLIP(src[1] + u1);
+			dest += jump;
 
 			*dest++ = CLIP(src[3] + v1);
 			*dest++ = CLIP(src[3] - rg);
 			*dest++ = CLIP(src[3] + u1);
+			dest += jump;
 			src += 4;
 		}
 		src += stride - width * 2;
@@ -587,21 +594,24 @@ void v4lconvert_rgb565_to_yuv420(const unsigned char *src, unsigned char *dest,
 	}
 }
 
-void v4lconvert_y16_to_rgb24(const unsigned char *src, unsigned char *dest,
-		int width, int height, int little_endian)
+void v4lconvert_yX_to_rgbX(const unsigned char *src, unsigned char *dest,
+		int width, int height, int Xin, int Xout, int xin_little_endian)
 {
 	int j;
+	int jmpout = (Xout / 8) - 3;
+	int jmpin = (Xin / 8);
 
-	if (little_endian)
-		src++;
+	if (xin_little_endian)
+		src += jmpin-1;
 
 	while (--height >= 0) {
 		for (j = 0; j < width; j++) {
 			*dest++ = *src;
 			*dest++ = *src;
 			*dest++ = *src;
-			src+=2;
+			src += jmpin;
 		}
+		dest += jmpout;
 	}
 }
 
@@ -611,7 +621,7 @@ void v4lconvert_y16_to_yuv420(const unsigned char *src, unsigned char *dest,
 	int x, y;
 
 	if (little_endian)
-		src++;
+		src ++;
 
 	/* Y */
 	for (y = 0; y < src_fmt->fmt.pix.height; y++)
@@ -734,24 +744,52 @@ int v4lconvert_y10b_to_yuv420(struct v4lconvert_data *data,
 	return 0;
 }
 
-void v4lconvert_rgb32_to_rgb24(const unsigned char *src, unsigned char *dest,
-		int width, int height,int bgr)
+void v4lconvert_bswap16(const unsigned char *src, unsigned char *dest,
+			int width, int height)
 {
-	int j;
-	while (--height >= 0) {
+	uint16_t *in = (uint16_t *)src;
+	uint16_t *out = (uint16_t *)dest;
+	int i;
+
+	for (i = width * height; i > 0 ; i--)
+		*out++  = bswap_16(*in++);
+
+}
+
+void v4lconvert_rgbX_to_rgbX(const unsigned char *src, unsigned char *dest,
+		int width, int height,int bgr,int Xin,int Xout){
+	int j,k;
+	int bppIN = Xin / 8;
+	int bppOut = Xout / 8;
+
+	while (--height >= 0)
 		for (j = 0; j < width; j++) {
-			if (bgr){
-				*dest++ = src[2];
-				*dest++ = src[1];
-				*dest++ = src[0];
-				src+=4;
-			}
-			else{
-				*dest++ = *src++;
-				*dest++ = *src++;
-				*dest++ = *src++;
-				src+=1;
-			}
+			for (k = 0; k < bppOut; k++)
+				if (k >= bppOut)
+					*dest++ = 0;
+				else if (bgr && k < 3)
+					*dest++ = src[2-k];
+				else
+					*dest++ = src[k];
+			src+=bppIN;
 		}
-	}
+}
+
+void v4lconvert_rgb48_to_rgbX(const unsigned char *src, unsigned char *dest,
+		int width, int height, int bgr, int Xout){
+	int i,idx;
+	int extra=(Xout/8)-3;
+
+	while (--height >= 0)
+		while (--width >= 0){
+			for (i = 0; i < 3; i++){
+				if (bgr)
+					idx= (2-i)*2;
+				else
+					idx= i*2;
+				*dest++=src[idx];
+			}
+			dest+=extra;
+			src+=6;
+		}
 }

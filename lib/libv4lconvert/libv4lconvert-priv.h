@@ -120,8 +120,8 @@ void v4lconvert_yuv420_to_rgb24(const unsigned char *src, unsigned char *dst,
 void v4lconvert_yuv420_to_bgr24(const unsigned char *src, unsigned char *dst,
 		int width, int height, int yvu);
 
-void v4lconvert_yuyv_to_rgb24(const unsigned char *src, unsigned char *dst,
-		int width, int height, int stride);
+void v4lconvert_yuyv_to_rgbX(const unsigned char *src, unsigned char *dst,
+		int width, int height, int stride, int Xout);
 
 void v4lconvert_yuyv_to_bgr24(const unsigned char *src, unsigned char *dst,
 		int width, int height, int stride);
@@ -135,8 +135,8 @@ void v4lconvert_yvyu_to_rgb24(const unsigned char *src, unsigned char *dst,
 void v4lconvert_yvyu_to_bgr24(const unsigned char *src, unsigned char *dst,
 		int width, int height, int stride);
 
-void v4lconvert_uyvy_to_rgb24(const unsigned char *src, unsigned char *dst,
-		int width, int height, int stride);
+void v4lconvert_uyvy_to_rgbX(const unsigned char *src, unsigned char *dst,
+		int width, int height, int stride, int Xout);
 
 void v4lconvert_uyvy_to_bgr24(const unsigned char *src, unsigned char *dst,
 		int width, int height, int stride);
@@ -156,14 +156,20 @@ void v4lconvert_grey_to_rgb24(const unsigned char *src, unsigned char *dest,
 void v4lconvert_grey_to_yuv420(const unsigned char *src, unsigned char *dest,
 		const struct v4l2_format *src_fmt);
 
-void v4lconvert_y16_to_rgb24(const unsigned char *src, unsigned char *dest,
-		int width, int height, int little_endian);
+void v4lconvert_yX_to_rgbX(const unsigned char *src, unsigned char *dest,
+		int width, int height, int Xin, int Xout, int xin_little_endian);
 
 void v4lconvert_y16_to_yuv420(const unsigned char *src, unsigned char *dest,
 		const struct v4l2_format *src_fmt, int little_endian);
 
-void v4lconvert_rgb32_to_rgb24(const unsigned char *src, unsigned char *dest,
-		int width, int height, int bgr);
+void v4lconvert_bswap16(const unsigned char *src, unsigned char *dest,
+			int width, int height);
+
+void v4lconvert_rgbX_to_rgbX(const unsigned char *src, unsigned char *dest,
+		int width, int height, int bgr, int Xin, int Xout);
+
+void v4lconvert_rgb48_to_rgbX(const unsigned char *src, unsigned char *dest,
+		int width, int height, int bgr, int Xout);
 
 int v4lconvert_y10b_to_rgb24(struct v4lconvert_data *data,
 	const unsigned char *src, unsigned char *dest, int width, int height);
