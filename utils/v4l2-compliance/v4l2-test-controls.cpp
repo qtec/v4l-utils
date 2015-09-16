@@ -377,6 +377,9 @@ int testSimpleControls(struct node *node)
 	for (iter = node->controls.begin(); iter != node->controls.end(); ++iter) {
 		test_query_ext_ctrl &qctrl = iter->second;
 
+		if (qctrl.elems > 1)
+			continue;
+
 		info("checking control '%s' (0x%08x)\n", qctrl.name, qctrl.id);
 		ctrl.id = qctrl.id;
 		if (qctrl.type == V4L2_CTRL_TYPE_INTEGER64 ||
@@ -518,6 +521,10 @@ static int checkExtendedCtrl(struct v4l2_ext_control &ctrl, struct test_query_ex
 
 	if (ctrl.id != qctrl.id)
 		return fail("control id mismatch\n");
+
+	if (qctrl.elems > 1)
+		return 0;
+
 	switch (qctrl.type) {
 	case V4L2_CTRL_TYPE_INTEGER:
 	case V4L2_CTRL_TYPE_INTEGER64:
@@ -620,13 +627,18 @@ int testExtendedControls(struct node *node)
 			ctrl.id = qctrl.id;
 			ctrl.value = qctrl.default_value;
 		} else {
-			if (ret != ENOSPC && qctrl.type == V4L2_CTRL_TYPE_STRING)
+			if (ret != ENOSPC &&
+				(qctrl.type == V4L2_CTRL_TYPE_STRING || qctrl.elems > 1 ))
 				return fail("did not check against size\n");
 			if (ret == ENOSPC && qctrl.type == V4L2_CTRL_TYPE_STRING) {
 				if (ctrls.error_idx != 0)
 					return fail("invalid error index string control\n");
 				ctrl.string = new char[qctrl.maximum + 1];
 				ctrl.size = qctrl.maximum + 1;
+				ret = doioctl(node, VIDIOC_G_EXT_CTRLS, &ctrls);
+			}
+			if (ret == ENOSPC && qctrl.elems > 1){
+				ctrl.ptr = new char[ctrl.size];
 				ret = doioctl(node, VIDIOC_G_EXT_CTRLS, &ctrls);
 			}
 			if (ret == EIO) {
@@ -668,7 +680,7 @@ int testExtendedControls(struct node *node)
 			if (checkExtendedCtrl(ctrl, qctrl))
 				return fail("s_ext_ctrls returned invalid control contents (%08x)\n", qctrl.id);
 		}
-		if (qctrl.type == V4L2_CTRL_TYPE_STRING)
+		if (qctrl.type == V4L2_CTRL_TYPE_STRING || qctrl.elems > 1)
 			delete [] ctrl.string;
 		ctrl.string = NULL;
 	}
@@ -707,6 +719,10 @@ int testExtendedControls(struct node *node)
 		if (qctrl.type == V4L2_CTRL_TYPE_STRING) {
 			ctrl.size = qctrl.maximum + 1;
 			ctrl.string = new char[ctrl.size];
+		}
+		if (qctrl.elems > 1){
+			ctrl.size = qctrl.elem_size * qctrl.elems;
+			ctrl.ptr = new char[ctrl.size];
 		}
 		ctrl.reserved2[0] = 0;
 		if (!ctrl_class)
