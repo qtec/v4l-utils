@@ -400,6 +400,16 @@ struct v4l2_rect {
 	uint32_t   height;
 };
 
+struct v4l2_ext_rect {
+	struct v4l2_rect r;
+	uint32_t   reserved[4];
+};
+
+struct v4l2_point {
+       uint32_t   x;
+       uint32_t   y;
+};
+
 struct v4l2_fract {
 	uint32_t   numerator;
 	uint32_t   denominator;
@@ -638,6 +648,14 @@ struct v4l2_pix_format {
 #define V4L2_PIX_FMT_JPGL	v4l2_fourcc('J', 'P', 'G', 'L') /* JPEG-Lite */
 #define V4L2_PIX_FMT_SE401      v4l2_fourcc('S', '4', '0', '1') /* se401 janggu compressed rgb */
 #define V4L2_PIX_FMT_S5C_UYVY_JPG v4l2_fourcc('S', '5', 'C', 'I') /* S5C73M3 interleaved UYVY/JPEG */
+#define V4L2_PIX_FMT_QTEC_RGBPP40 v4l2_fourcc('Q', '5', '4', '0') /* Qtec RGBPP 40 bits */
+#define V4L2_PIX_FMT_QTEC_RGBPP80 v4l2_fourcc('Q', '5', '8', '0') /* Qtec RGBPP 80 bits */
+#define V4L2_PIX_FMT_QTEC_DISTORTION v4l2_fourcc('Q', 'D', 'I', 'S') /* Qtec Distortion 32 bits */
+#define V4L2_PIX_FMT_QTEC_GREEN8 v4l2_fourcc('Q', 'G', '0', '8') /* Qtec Green 8 bits */
+#define V4L2_PIX_FMT_QTEC_GREEN16 v4l2_fourcc('Q', 'G', '1', '6') /* Qtec Green 16 bits */
+#define V4L2_PIX_FMT_QTEC_GREEN16_BE v4l2_fourcc_be('Q', 'G', '1', '6') /* Qtec Green 16 bits BE */
+#define V4L2_PIX_FMT_BGR48   v4l2_fourcc('B', 'G', 'R', '6') /* 48  BGR-16-16-16  */
+#define V4L2_PIX_FMT_RGB48   v4l2_fourcc('R', 'G', 'B', '6') /* 48  RGB-16-16-16  */
 
 /* SDR formats - used only for Software Defined Radio devices */
 #define V4L2_SDR_FMT_CU8          v4l2_fourcc('C', 'U', '0', '8') /* IQ u8 */
@@ -1059,8 +1077,12 @@ struct v4l2_selection {
 	uint32_t			type;
 	uint32_t			target;
 	uint32_t                   flags;
-	struct v4l2_rect        r;
-	uint32_t                   reserved[9];
+	union{
+		struct v4l2_rect        r;
+		struct v4l2_ext_rect        *pr;
+	};
+	uint32_t                   rectangles;
+	uint32_t                   reserved[8];
 };
 
 
@@ -1489,6 +1511,7 @@ struct v4l2_ext_control {
 		uint16_t *p_u16;
 		uint32_t *p_u32;
 		void *ptr;
+		struct v4l2_point *p_point;
 	};
 } __attribute__ ((packed));
 
@@ -1521,6 +1544,7 @@ enum v4l2_ctrl_type {
 	V4L2_CTRL_TYPE_U8	     = 0x0100,
 	V4L2_CTRL_TYPE_U16	     = 0x0101,
 	V4L2_CTRL_TYPE_U32	     = 0x0102,
+	V4L2_CTRL_TYPE_POINT	     = 0x01ff,
 };
 
 /*  Used in the VIDIOC_QUERYCTRL ioctl for querying controls */
@@ -2301,9 +2325,10 @@ struct v4l2_create_buffers {
 #define VIDIOC_DBG_G_CHIP_INFO  _IOWR('V', 102, struct v4l2_dbg_chip_info)
 
 #define VIDIOC_QUERY_EXT_CTRL	_IOWR('V', 103, struct v4l2_query_ext_ctrl)
+#define VIDIOC_G_DEF_EXT_CTRLS	_IOWR('V', 104, struct v4l2_ext_controls)
 
 /* Reminder: when adding new ioctls please add support for them to
-   drivers/media/video/v4l2-compat-ioctl32.c as well! */
+   drivers/media/v4l2-core/v4l2-compat-ioctl32.c as well! */
 
 #define BASE_VIDIOC_PRIVATE	192		/* 192-255 are private */
 

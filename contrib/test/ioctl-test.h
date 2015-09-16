@@ -141,6 +141,7 @@ static const struct {
 	ioc(video, VIDIOC_G_AUDOUT),							/*  struct v4l2_audioout */
 	ioc(video, VIDIOC_G_CROP),							/*  struct v4l2_crop */
 	ioc(video, VIDIOC_G_CTRL),							/*  struct v4l2_control */
+	ioc(video, VIDIOC_G_DEF_EXT_CTRLS),						/*  struct v4l2_ext_controls */
 	ioc(video, VIDIOC_G_DV_TIMINGS),						/*  struct v4l2_dv_timings */
 	ioc(video, VIDIOC_G_EDID),							/*  struct v4l2_edid */
 	ioc(video, VIDIOC_G_ENC_INDEX),							/*  struct v4l2_enc_idx */
