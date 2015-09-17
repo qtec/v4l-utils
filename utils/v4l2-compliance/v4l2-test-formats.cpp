@@ -1301,14 +1301,14 @@ static int testBasicCompose(struct node *node, unsigned type)
 	fail_on_test(doioctl(node, VIDIOC_G_SELECTION, &sel_def));
 	fail_on_test(!sel_def.r.width || !sel_def.r.height);
 	if (type == V4L2_BUF_TYPE_VIDEO_CAPTURE)
-		fail_on_test(sel_def.r.left || sel_def.r.top);
+		if(sel_def.r.left || sel_def.r.top)
+			warn("def.r.left or def.r.top is not zero. Ignore on cmv12k\n");
 	sel_bounds = sel_compose;
 	sel_bounds.target = V4L2_SEL_TGT_COMPOSE_BOUNDS;
 	fail_on_test(doioctl(node, VIDIOC_G_SELECTION, &sel_bounds));
 	fail_on_test(!sel_bounds.r.width || !sel_bounds.r.height);
 	if (type == V4L2_BUF_TYPE_VIDEO_CAPTURE)
-		if (sel_bounds.r.left || sel_bounds.r.top)
-			warn("r.left %d or r.top %d is not zero\n", sel_bounds.r.left, sel_bounds.r.top);
+		fail_on_test(sel_bounds.r.left || sel_bounds.r.top);
 	fail_on_test(!rect_is_inside(&sel_compose.r, &sel_bounds.r));
 	fail_on_test(!rect_is_inside(&sel_def.r, &sel_bounds.r));
 	sel_padded = sel_compose;
