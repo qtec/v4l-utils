@@ -1077,14 +1077,13 @@ struct v4l2_selection {
 	uint32_t			type;
 	uint32_t			target;
 	uint32_t                   flags;
-	union{
-		struct v4l2_rect        r;
-		struct v4l2_ext_rect        *pr;
-	};
+	struct v4l2_rect        r;
 	uint32_t                   rectangles;
-	uint32_t                   reserved[8];
+	union {
+		uint32_t                   reserved[8];
+		struct v4l2_ext_rect    *pr;
+	};
 };
-
 
 /*
  *      A N A L O G   V I D E O   S T A N D A R D
