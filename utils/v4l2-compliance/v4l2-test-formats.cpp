@@ -1302,7 +1302,7 @@ static int testBasicCompose(struct node *node, unsigned type)
 	fail_on_test(!sel_def.r.width || !sel_def.r.height);
 	if (type == V4L2_BUF_TYPE_VIDEO_CAPTURE)
 		if(sel_def.r.left || sel_def.r.top)
-			warn("def.r.left or def.r.top is not zero. Ignore on cmv12k\n");
+			warn("def.r.left or def.r.top is not zero. Ignore on cmv12 and cmv8k\n");
 	sel_bounds = sel_compose;
 	sel_bounds.target = V4L2_SEL_TGT_COMPOSE_BOUNDS;
 	fail_on_test(doioctl(node, VIDIOC_G_SELECTION, &sel_bounds));
