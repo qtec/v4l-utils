@@ -793,3 +793,73 @@ void v4lconvert_rgb48_to_rgbX(const unsigned char *src, unsigned char *dest,
 			src+=6;
 		}
 }
+
+//From http://stackoverflow.com/questions/3018313/algorithm-to-convert-rgb-to-hsv-and-hsv-to-rgb-in-range-0-255-for-both
+static void hsvtorgb(const unsigned char *hsv, unsigned char *rgb)
+{
+	uint8_t region;
+	uint8_t remain;
+	uint8_t p,q,t;
+	int aux;
+
+	if (!hsv[1]){
+		rgb[0] = rgb[1] = rgb[2] = hsv[2];
+		return;
+	}
+
+	region = hsv[0] / (180/6);
+	//Remain must be scaled to 0..255
+	aux = (hsv[0] % (180/6)) * 6 * 256;
+	aux /= 180;
+	remain = aux;
+
+	p = (hsv[2] * (255 - hsv[1])) >> 8;
+	q = (hsv[2] * (255 - ((hsv[1] * remain) >> 8))) >> 8;
+	t = (hsv[2] * (255 - ((hsv[1] * (255 - remain)) >> 8))) >> 8;
+
+	switch (region)
+	{
+		case 0:
+			rgb[0] = hsv[2]; rgb[1] = t; rgb[2] = p;
+			break;
+		case 1:
+			rgb[0] = q; rgb[1] = hsv[2]; rgb[2] = p;
+			break;
+		case 2:
+			rgb[0] = p; rgb[1] = hsv[2]; rgb[2] = t;
+			break;
+		case 3:
+			rgb[0] = p; rgb[1] = q; rgb[2] = hsv[2];
+			break;
+		case 4:
+			rgb[0] = t; rgb[1] = p; rgb[2] = hsv[2];
+			break;
+		default:
+			rgb[0] = hsv[2]; rgb[1] = p; rgb[2] = q;
+			break;
+	}
+
+	return;
+}
+
+void v4lconvert_hsv_to_rgbX(const unsigned char *src, unsigned char *dest,
+		int width, int height, int bgr, int Xin, int Xout){
+	int j,k;
+	int bppIN = Xin / 8;
+	int bppOut = Xout / 8;
+	char rgb[3];
+
+	while (--height >= 0)
+		for (j = 0; j < width; j++) {
+			hsvtorgb(src,rgb);
+			for (k = 0; k < bppOut; k++)
+				if (k >= bppOut)
+					*dest++ = 0;
+				else if (bgr && k < 3)
+					*dest++ = rgb[2-k];
+				else
+					*dest++ = rgb[k];
+			src+=bppIN;
+		}
+}
+
