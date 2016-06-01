@@ -847,7 +847,7 @@ void v4lconvert_hsv_to_rgbX(const unsigned char *src, unsigned char *dest,
 	int j,k;
 	int bppIN = Xin / 8;
 	int bppOut = Xout / 8;
-	char rgb[3];
+	unsigned char rgb[3];
 
 	while (--height >= 0)
 		for (j = 0; j < width; j++) {
