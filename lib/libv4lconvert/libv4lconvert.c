@@ -95,6 +95,8 @@ static const struct v4lconvert_pixfmt supported_src_pixfmts[] = {
 	{ V4L2_PIX_FMT_RGB565,		16,	 4,	 6,	0 },
 	{ V4L2_PIX_FMT_BGR32,		32,	 4,	 6,	0 },
 	{ V4L2_PIX_FMT_RGB32,		32,	 4,	 6,	0 },
+	{ V4L2_PIX_FMT_QTEC_RGBH,	32,	 4,	 6,	0 },
+	{ V4L2_PIX_FMT_QTEC_RGBY,	32,	 4,	 6,	0 },
 	{ V4L2_PIX_FMT_RGB48,		48,	 4,	 6,	0 },
 	{ V4L2_PIX_FMT_BGR48,		48,	 4,	 6,	0 },
 	{ V4L2_PIX_FMT_XBGR32,		32,	 4,	 6,	0 },
@@ -1180,6 +1182,8 @@ static int v4lconvert_convert_pixfmt(struct v4lconvert_data *data,
 	case V4L2_PIX_FMT_RGB32:
 	case V4L2_PIX_FMT_XRGB32:
 	case V4L2_PIX_FMT_ARGB32:
+	case V4L2_PIX_FMT_QTEC_RGBH:
+	case V4L2_PIX_FMT_QTEC_RGBY:
 		if (src_size < (width * height * 4)) {
 			V4LCONVERT_ERR("short rgb32 data frame\n");
 			errno = EPIPE;
