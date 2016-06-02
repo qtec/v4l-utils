@@ -626,6 +626,9 @@ struct v4l2_pix_format {
 #define V4L2_PIX_FMT_QTEC_HSV32 v4l2_fourcc('H', 'S', 'V', '4') /* Qtec xHSV 8 bits (H 0 to 180) (S & V 0 to 255) */
 #define V4L2_PIX_FMT_QTEC_HRGB v4l2_fourcc('H','R', 'G', 'B') /* Qtec HRGB 8 bits (H 0 to 180) */
 #define V4L2_PIX_FMT_QTEC_YRGB v4l2_fourcc('Y','R', 'G', 'B') /* Qtec YRGB 8 bits (Y Rec. 601) */
+/* fourcc BGRH is already taken by BGR666*/
+#define V4L2_PIX_FMT_QTEC_BGRH v4l2_fourcc('B','G', 'R', 'Q') /* Qtec BGRX 8 bits (H 0 to 180) */
+#define V4L2_PIX_FMT_QTEC_BGRY v4l2_fourcc('B','G', 'R', 'Y') /* Qtec BGRY 8 bits (Y Rec. 601) */
 
 /* SDR formats - used only for Software Defined Radio devices */
 #define V4L2_SDR_FMT_CU8          v4l2_fourcc('C', 'U', '0', '8') /* IQ u8 */
