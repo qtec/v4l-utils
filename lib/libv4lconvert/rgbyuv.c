@@ -842,20 +842,19 @@ static void hsvtorgb(const unsigned char *hsv, unsigned char *rgb)
 	return;
 }
 
-void v4lconvert_hsv_to_rgbX(const unsigned char *src, unsigned char *dest,
-		int width, int height, int bgr, int Xin, int Xout){
+void v4lconvert_hsv_to_rgb24(const unsigned char *src, unsigned char *dest,
+		int width, int height, int bgr, int Xin){
 	int j,k;
 	int bppIN = Xin / 8;
-	int bppOut = Xout / 8;
 	unsigned char rgb[3];
+
+	src += bppIN - 3;
 
 	while (--height >= 0)
 		for (j = 0; j < width; j++) {
 			hsvtorgb(src,rgb);
-			for (k = 0; k < bppOut; k++)
-				if (k >= bppOut)
-					*dest++ = 0;
-				else if (bgr && k < 3)
+			for (k = 0; k <3; k++)
+				if (bgr && k < 3)
 					*dest++ = rgb[2-k];
 				else
 					*dest++ = rgb[k];
