@@ -1330,7 +1330,7 @@ static int v4lconvert_convert_pixfmt(struct v4lconvert_data *data,
 			v4lconvert_hsv_to_rgb24(src, dest, width, height, 0, 24);
 			break;
 		case V4L2_PIX_FMT_BGR24:
-			v4lconvert_rgbX_to_rgbX(src, dest, width, height, 1, 24, 24);
+			v4lconvert_hsv_to_rgb24(src, dest, width, height, 1, 24);
 			break;
 		case V4L2_PIX_FMT_YUV420:
 			v4lconvert_hsv_to_rgb24(src, dest, width, height, 0, 24);
@@ -1355,7 +1355,7 @@ static int v4lconvert_convert_pixfmt(struct v4lconvert_data *data,
 			v4lconvert_hsv_to_rgb24(src, dest, width, height, 0, 32);
 			break;
 		case V4L2_PIX_FMT_BGR24:
-			v4lconvert_rgbX_to_rgbX(src, dest, width, height, 1, 32, 24);
+			v4lconvert_hsv_to_rgb24(src, dest, width, height, 1, 32);
 			break;
 		case V4L2_PIX_FMT_YUV420:
 			v4lconvert_hsv_to_rgb24(src, dest, width, height, 0, 32);
