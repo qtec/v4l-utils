@@ -87,7 +87,8 @@ static void v4lconvert_get_framesizes(struct v4lconvert_data *data,
 	{ V4L2_PIX_FMT_Y16,		16,	20,	20,	0 }, \
 	{ V4L2_PIX_FMT_Y16_BE,		16,	20,	20,	0 }, \
 	{ V4L2_PIX_FMT_QTEC_GREEN16,	16,	20,	20,	0 }, \
-	{ V4L2_PIX_FMT_QTEC_GREEN16_BE,	16,	20,	20,	0 } \
+	{ V4L2_PIX_FMT_QTEC_GREEN16_BE,	16,	20,	20,	0 }, \
+	{ V4L2_PIX_FMT_QTEC_HSV24,	24,	 5,	 4,	0 } \
 
 static const struct v4lconvert_pixfmt supported_src_pixfmts[] = {
 	SUPPORTED_DST_PIXFMTS,
@@ -151,7 +152,6 @@ static const struct v4lconvert_pixfmt supported_src_pixfmts[] = {
 	{ V4L2_PIX_FMT_Y10BPACK,	10,	20,	20,	0 },
 	{ V4L2_PIX_FMT_QTEC_GREEN8,	 8,	20,	20,	0 },
 	/* hsv formats */
-	{ V4L2_PIX_FMT_QTEC_HSV24,	24,	 5,	 4,	0 },
 	{ V4L2_PIX_FMT_QTEC_HSV32,	32,	 5,	 4,	0 },
 };
 
@@ -1364,6 +1364,9 @@ static int v4lconvert_convert_pixfmt(struct v4lconvert_data *data,
 		case V4L2_PIX_FMT_YVU420:
 			v4lconvert_hsv_to_rgb24(src, dest, width, height, 0, 32);
 			v4lconvert_rgb24_to_yuv420(src, dest, fmt, 0, 1, 3);
+			break;
+		case V4L2_PIX_FMT_QTEC_HSV24:
+			v4lconvert_rgbX_to_rgbX(src, dest, width, height, 0, 32, 24);
 			break;
 		}
 
