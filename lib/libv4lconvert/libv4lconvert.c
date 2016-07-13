@@ -88,7 +88,11 @@ static void v4lconvert_get_framesizes(struct v4lconvert_data *data,
 	{ V4L2_PIX_FMT_Y16_BE,		16,	20,	20,	0 }, \
 	{ V4L2_PIX_FMT_QTEC_GREEN16,	16,	20,	20,	0 }, \
 	{ V4L2_PIX_FMT_QTEC_GREEN16_BE,	16,	20,	20,	0 }, \
-	{ V4L2_PIX_FMT_QTEC_HSV24,	24,	 5,	 4,	0 } \
+	{ V4L2_PIX_FMT_QTEC_HSV24,	24,	 5,	 4,	0 }, \
+	{ V4L2_PIX_FMT_QTEC_HRGB,	32,	 4,	 6,	0 }, \
+	{ V4L2_PIX_FMT_QTEC_YRGB,	32,	 4,	 6,	0 }, \
+	{ V4L2_PIX_FMT_QTEC_BGRH,	32,	 4,	 6,	0 }, \
+	{ V4L2_PIX_FMT_QTEC_BGRY,	32,	 4,	 6,	0 }  \
 
 static const struct v4lconvert_pixfmt supported_src_pixfmts[] = {
 	SUPPORTED_DST_PIXFMTS,
@@ -96,10 +100,6 @@ static const struct v4lconvert_pixfmt supported_src_pixfmts[] = {
 	{ V4L2_PIX_FMT_RGB565,		16,	 4,	 6,	0 },
 	{ V4L2_PIX_FMT_BGR32,		32,	 4,	 6,	0 },
 	{ V4L2_PIX_FMT_RGB32,		32,	 4,	 6,	0 },
-	{ V4L2_PIX_FMT_QTEC_HRGB,	32,	 4,	 6,	0 },
-	{ V4L2_PIX_FMT_QTEC_YRGB,	32,	 4,	 6,	0 },
-	{ V4L2_PIX_FMT_QTEC_BGRH,	32,	 4,	 6,	0 },
-	{ V4L2_PIX_FMT_QTEC_BGRY,	32,	 4,	 6,	0 },
 	{ V4L2_PIX_FMT_RGB48,		48,	 4,	 6,	0 },
 	{ V4L2_PIX_FMT_BGR48,		48,	 4,	 6,	0 },
 	{ V4L2_PIX_FMT_XBGR32,		32,	 4,	 6,	0 },
@@ -1208,6 +1208,14 @@ static int v4lconvert_convert_pixfmt(struct v4lconvert_data *data,
 		case V4L2_PIX_FMT_QTEC_RGBPP40:
 			v4lconvert_rgbX_to_rgbX(src, dest, width, height, 0, 32, 40);
 			break;
+		case V4L2_PIX_FMT_QTEC_YRGB:
+		case V4L2_PIX_FMT_QTEC_HRGB:
+			if ((dest_pix_fmt == V4L2_PIX_FMT_QTEC_BGRY
+				&& src_pix_fmt == V4L2_PIX_FMT_QTEC_YRGB) ||
+				(dest_pix_fmt == V4L2_PIX_FMT_QTEC_BGRH
+				&& src_pix_fmt == V4L2_PIX_FMT_QTEC_HRGB))
+				v4lconvert_swap_32(src, dest, width, height);
+			break;
 		}
 		break;
 
@@ -1236,6 +1244,14 @@ static int v4lconvert_convert_pixfmt(struct v4lconvert_data *data,
 			break;
 		case V4L2_PIX_FMT_QTEC_RGBPP40:
 			v4lconvert_rgbX_to_rgbX(src, dest, width, height, 1, 32, 40);
+			break;
+		case V4L2_PIX_FMT_QTEC_YRGB:
+		case V4L2_PIX_FMT_QTEC_HRGB:
+			if ((src_pix_fmt == V4L2_PIX_FMT_QTEC_BGRY
+				&& dest_pix_fmt == V4L2_PIX_FMT_QTEC_YRGB) ||
+				(src_pix_fmt == V4L2_PIX_FMT_QTEC_BGRH
+				&& dest_pix_fmt == V4L2_PIX_FMT_QTEC_HRGB))
+				v4lconvert_swap_32(src, dest, width, height);
 			break;
 		}
 		break;

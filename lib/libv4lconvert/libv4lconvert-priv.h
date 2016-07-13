@@ -147,6 +147,9 @@ void v4lconvert_uyvy_to_yuv420(const unsigned char *src, unsigned char *dst,
 void v4lconvert_swap_rgb(const unsigned char *src, unsigned char *dst,
 		int width, int height);
 
+void v4lconvert_swap_32(const unsigned char *src, unsigned char *dst,
+		int width, int height);
+
 void v4lconvert_swap_uv(const unsigned char *src, unsigned char *dst,
 		const struct v4l2_format *src_fmt);
 

@@ -465,6 +465,23 @@ void v4lconvert_swap_rgb(const unsigned char *src, unsigned char *dst,
 	}
 }
 
+void v4lconvert_swap_32(const unsigned char *src, unsigned char *dst,
+		int width, int height)
+{
+	int i;
+
+	for (i = 0; i < (width * height); i++) {
+		unsigned char tmp0, tmp1, tmp2;
+		tmp0 = *src++;
+		tmp1 = *src++;
+		tmp2 = *src++;
+		*dst++ = *src++;
+		*dst++ = tmp2;
+		*dst++ = tmp1;
+		*dst++ = tmp0;
+	}
+}
+
 void v4lconvert_swap_uv(const unsigned char *src, unsigned char *dest,
 		const struct v4l2_format *src_fmt)
 {
