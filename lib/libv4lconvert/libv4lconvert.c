@@ -1561,6 +1561,7 @@ int v4lconvert_convert(struct v4lconvert_data *data,
 	switch (my_dest_fmt.fmt.pix.pixelformat) {
 	case V4L2_PIX_FMT_RGB24:
 	case V4L2_PIX_FMT_BGR24:
+	case V4L2_PIX_FMT_QTEC_HSV24:
 		dest_needed = my_dest_fmt.fmt.pix.width * my_dest_fmt.fmt.pix.height * 3;
 		temp_needed = my_src_fmt.fmt.pix.width * my_src_fmt.fmt.pix.height * 3;
 		break;
@@ -1581,6 +1582,14 @@ int v4lconvert_convert(struct v4lconvert_data *data,
 	case V4L2_PIX_FMT_QTEC_GREEN16_BE:
 		dest_needed = my_dest_fmt.fmt.pix.width * my_dest_fmt.fmt.pix.height * 2;
 		temp_needed = my_src_fmt.fmt.pix.width * my_src_fmt.fmt.pix.height * 2;
+		break;
+	case V4L2_PIX_FMT_QTEC_HRGB:
+	case V4L2_PIX_FMT_QTEC_YRGB:
+	case V4L2_PIX_FMT_QTEC_BGRH:
+	case V4L2_PIX_FMT_QTEC_BGRY:
+		dest_needed = my_dest_fmt.fmt.pix.width * my_dest_fmt.fmt.pix.height * 4;
+		temp_needed = my_src_fmt.fmt.pix.width * my_src_fmt.fmt.pix.height * 4;
+		break;
 		break;
 	default:
 		V4LCONVERT_ERR("Unknown dest format in conversion\n");
