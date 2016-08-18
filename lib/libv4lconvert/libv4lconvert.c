@@ -1382,6 +1382,7 @@ static int v4lconvert_convert_pixfmt(struct v4lconvert_data *data,
 			v4lconvert_rgb24_to_yuv420(src, dest, fmt, 0, 1, 3);
 			break;
 		case V4L2_PIX_FMT_QTEC_HSV24:
+			src++;
 			v4lconvert_rgbX_to_rgbX(src, dest, width, height, 0, 32, 24);
 			break;
 		}
