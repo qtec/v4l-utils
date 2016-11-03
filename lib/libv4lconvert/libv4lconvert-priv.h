@@ -175,7 +175,7 @@ void v4lconvert_rgb48_to_rgbX(const unsigned char *src, unsigned char *dest,
 		int width, int height, int bgr, int Xout);
 
 void v4lconvert_hsv_to_rgb24(const unsigned char *src, unsigned char *dest,
-		int width, int height, int bgr, int Xin);
+		int width, int height, int bgr, int Xin, unsigned char hsv_enc);
 
 int v4lconvert_y10b_to_rgb24(struct v4lconvert_data *data,
 	const unsigned char *src, unsigned char *dest, int width, int height);

@@ -812,23 +812,29 @@ void v4lconvert_rgb48_to_rgbX(const unsigned char *src, unsigned char *dest,
 }
 
 //From http://stackoverflow.com/questions/3018313/algorithm-to-convert-rgb-to-hsv-and-hsv-to-rgb-in-range-0-255-for-both
-static void hsvtorgb(const unsigned char *hsv, unsigned char *rgb)
+static void hsvtorgb(const unsigned char *hsv, unsigned char *rgb, unsigned char hsv_enc)
 {
 	uint8_t region;
 	uint8_t remain;
 	uint8_t p,q,t;
-	int aux;
 
 	if (!hsv[1]){
 		rgb[0] = rgb[1] = rgb[2] = hsv[2];
 		return;
 	}
 
-	region = hsv[0] / (180/6);
-	//Remain must be scaled to 0..255
-	aux = (hsv[0] % (180/6)) * 6 * 256;
-	aux /= 180;
-	remain = aux;
+	if (hsv_enc == V4L2_HSV_ENC_256){
+		region = hsv[0] / 43;
+		remain = (hsv[0] - (region * 43)) * 6;
+	} else{
+		int aux;
+
+		region = hsv[0] / (180/6);
+		//Remain must be scaled to 0..255
+		aux = (hsv[0] % (180/6)) * 6 * 256;
+		aux /= 180;
+		remain = aux;
+	}
 
 	p = (hsv[2] * (255 - hsv[1])) >> 8;
 	q = (hsv[2] * (255 - ((hsv[1] * remain) >> 8))) >> 8;
@@ -860,7 +866,7 @@ static void hsvtorgb(const unsigned char *hsv, unsigned char *rgb)
 }
 
 void v4lconvert_hsv_to_rgb24(const unsigned char *src, unsigned char *dest,
-		int width, int height, int bgr, int Xin){
+		int width, int height, int bgr, int Xin, unsigned char hsv_enc){
 	int j,k;
 	int bppIN = Xin / 8;
 	unsigned char rgb[3];
@@ -869,7 +875,7 @@ void v4lconvert_hsv_to_rgb24(const unsigned char *src, unsigned char *dest,
 
 	while (--height >= 0)
 		for (j = 0; j < width; j++) {
-			hsvtorgb(src,rgb);
+			hsvtorgb(src,rgb, hsv_enc);
 			for (k = 0; k <3; k++)
 				if (bgr && k < 3)
 					*dest++ = rgb[2-k];

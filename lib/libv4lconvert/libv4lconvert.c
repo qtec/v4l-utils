@@ -1343,17 +1343,17 @@ static int v4lconvert_convert_pixfmt(struct v4lconvert_data *data,
 		}
 		switch (dest_pix_fmt) {
 		case V4L2_PIX_FMT_RGB24:
-			v4lconvert_hsv_to_rgb24(src, dest, width, height, 0, 24);
+			v4lconvert_hsv_to_rgb24(src, dest, width, height, 0, 24, fmt->fmt.pix.hsv_enc);
 			break;
 		case V4L2_PIX_FMT_BGR24:
-			v4lconvert_hsv_to_rgb24(src, dest, width, height, 1, 24);
+			v4lconvert_hsv_to_rgb24(src, dest, width, height, 1, 24, fmt->fmt.pix.hsv_enc);
 			break;
 		case V4L2_PIX_FMT_YUV420:
-			v4lconvert_hsv_to_rgb24(src, dest, width, height, 0, 24);
+			v4lconvert_hsv_to_rgb24(src, dest, width, height, 0, 24, fmt->fmt.pix.hsv_enc);
 			v4lconvert_rgb24_to_yuv420(src, dest, fmt, 0, 0, 3);
 			break;
 		case V4L2_PIX_FMT_YVU420:
-			v4lconvert_hsv_to_rgb24(src, dest, width, height, 0, 24);
+			v4lconvert_hsv_to_rgb24(src, dest, width, height, 0, 24, fmt->fmt.pix.hsv_enc);
 			v4lconvert_rgb24_to_yuv420(src, dest, fmt, 0, 1, 3);
 			break;
 		}
@@ -1368,17 +1368,17 @@ static int v4lconvert_convert_pixfmt(struct v4lconvert_data *data,
 		}
 		switch (dest_pix_fmt) {
 		case V4L2_PIX_FMT_RGB24:
-			v4lconvert_hsv_to_rgb24(src, dest, width, height, 0, 32);
+			v4lconvert_hsv_to_rgb24(src, dest, width, height, 0, 32, fmt->fmt.pix.hsv_enc);
 			break;
 		case V4L2_PIX_FMT_BGR24:
-			v4lconvert_hsv_to_rgb24(src, dest, width, height, 1, 32);
+			v4lconvert_hsv_to_rgb24(src, dest, width, height, 1, 32, fmt->fmt.pix.hsv_enc);
 			break;
 		case V4L2_PIX_FMT_YUV420:
-			v4lconvert_hsv_to_rgb24(src, dest, width, height, 0, 32);
+			v4lconvert_hsv_to_rgb24(src, dest, width, height, 0, 32, fmt->fmt.pix.hsv_enc);
 			v4lconvert_rgb24_to_yuv420(src, dest, fmt, 0, 0, 3);
 			break;
 		case V4L2_PIX_FMT_YVU420:
-			v4lconvert_hsv_to_rgb24(src, dest, width, height, 0, 32);
+			v4lconvert_hsv_to_rgb24(src, dest, width, height, 0, 32, fmt->fmt.pix.hsv_enc);
 			v4lconvert_rgb24_to_yuv420(src, dest, fmt, 0, 1, 3);
 			break;
 		case V4L2_PIX_FMT_HSV24:
