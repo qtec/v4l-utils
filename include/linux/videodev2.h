@@ -319,6 +319,19 @@ enum v4l2_ycbcr_encoding {
 };
 
 /*
+ * enum v4l2_hsv_encoding values should not collide with the ones from
+ * enum v4l2_ycbcr_encoding.
+ */
+enum v4l2_hsv_encoding {
+
+	/* Hue mapped to 0 - 179 */
+	V4L2_HSV_ENC_180		= 128,
+
+	/* Hue mapped to 0-255 */
+	V4L2_HSV_ENC_256		= 129,
+};
+
+/*
  * Determine how YCBCR_ENC_DEFAULT should map to a proper Y'CbCr encoding.
  * This depends on the colorspace.
  */
@@ -451,7 +464,12 @@ struct v4l2_pix_format {
 	__u32			colorspace;	/* enum v4l2_colorspace */
 	__u32			priv;		/* private data, depends on pixelformat */
 	__u32			flags;		/* format flags (V4L2_PIX_FMT_FLAG_*) */
-	__u32			ycbcr_enc;	/* enum v4l2_ycbcr_encoding */
+	union {
+		/* enum v4l2_ycbcr_encoding */
+		__u32			ycbcr_enc;
+		/* enum v4l2_hsv_encoding */
+		__u32			hsv_enc;
+	};
 	__u32			quantization;	/* enum v4l2_quantization */
 	__u32			xfer_func;	/* enum v4l2_xfer_func */
 };
@@ -570,6 +588,10 @@ struct v4l2_pix_format {
 #define V4L2_PIX_FMT_SRGGB12 v4l2_fourcc('R', 'G', '1', '2') /* 12  RGRG.. GBGB.. */
 #define V4L2_PIX_FMT_SBGGR16 v4l2_fourcc('B', 'Y', 'R', '2') /* 16  BGBG.. GRGR.. */
 
+/* HSV formats */
+#define V4L2_PIX_FMT_HSV24 v4l2_fourcc('H', 'S', 'V', '3')
+#define V4L2_PIX_FMT_HSV32 v4l2_fourcc('H', 'S', 'V', '4')
+
 /* compressed formats */
 #define V4L2_PIX_FMT_MJPEG    v4l2_fourcc('M', 'J', 'P', 'G') /* Motion-JPEG   */
 #define V4L2_PIX_FMT_JPEG     v4l2_fourcc('J', 'P', 'E', 'G') /* JFIF JPEG     */
@@ -622,8 +644,6 @@ struct v4l2_pix_format {
 #define V4L2_PIX_FMT_QTEC_GREEN16_BE v4l2_fourcc_be('Q', 'G', '1', '6') /* Qtec Green 16 bits BE */
 #define V4L2_PIX_FMT_BGR48   v4l2_fourcc('B', 'G', 'R', '6') /* 48  BGR-16-16-16  */
 #define V4L2_PIX_FMT_RGB48   v4l2_fourcc('R', 'G', 'B', '6') /* 48  RGB-16-16-16  */
-#define V4L2_PIX_FMT_QTEC_HSV24 v4l2_fourcc('H', 'S', 'V', '3') /* Qtec HSV 8 bits (H 0 to 180) (S & V 0 to 255) */
-#define V4L2_PIX_FMT_QTEC_HSV32 v4l2_fourcc('H', 'S', 'V', '4') /* Qtec xHSV 8 bits (H 0 to 180) (S & V 0 to 255) */
 #define V4L2_PIX_FMT_QTEC_HRGB v4l2_fourcc('H','R', 'G', 'B') /* Qtec HRGB 8 bits (H 0 to 180) */
 #define V4L2_PIX_FMT_QTEC_YRGB v4l2_fourcc('Y','R', 'G', 'B') /* Qtec YRGB 8 bits (Y Rec. 601) */
 /* fourcc BGRH is already taken by BGR666*/
@@ -1984,7 +2004,10 @@ struct v4l2_pix_format_mplane {
 	struct v4l2_plane_pix_format	plane_fmt[VIDEO_MAX_PLANES];
 	__u8				num_planes;
 	__u8				flags;
-	__u8				ycbcr_enc;
+	 union {
+		__u8				ycbcr_enc;
+		__u8				hsv_enc;
+	};
 	__u8				quantization;
 	__u8				xfer_func;
 	__u8				reserved[7];
