@@ -201,6 +201,47 @@ void v4lconvert_yuv420_to_rgb24(const unsigned char *src, unsigned char *dest,
 	}
 }
 
+void v4lconvert_nv12_to_rgb24(const unsigned char *src, unsigned char *dest,
+		int width, int height, int bgr)
+{
+	int i, j;
+
+	const unsigned char *ysrc = src;
+	const unsigned char *uvsrc = src + width * height;
+
+	for (i = 0; i < height; i++) {
+		for (j = 0; j < width; j += 2) {
+			if (bgr){
+				*dest++ = YUV2B(*ysrc, *uvsrc, *(uvsrc + 1));
+				*dest++ = YUV2G(*ysrc, *uvsrc, *(uvsrc + 1));
+				*dest++ = YUV2R(*ysrc, *uvsrc, *(uvsrc + 1));
+			} else {
+				*dest++ = YUV2R(*ysrc, *uvsrc, *(uvsrc + 1));
+				*dest++ = YUV2G(*ysrc, *uvsrc, *(uvsrc + 1));
+				*dest++ = YUV2B(*ysrc, *uvsrc, *(uvsrc + 1));
+			}
+			ysrc++;
+
+			if (bgr) {
+				*dest++ = YUV2B(*ysrc, *uvsrc, *(uvsrc + 1));
+				*dest++ = YUV2G(*ysrc, *uvsrc, *(uvsrc + 1));
+				*dest++ = YUV2R(*ysrc, *uvsrc, *(uvsrc + 1));
+			} else {
+				*dest++ = YUV2R(*ysrc, *uvsrc, *(uvsrc + 1));
+				*dest++ = YUV2G(*ysrc, *uvsrc, *(uvsrc + 1));
+				*dest++ = YUV2B(*ysrc, *uvsrc, *(uvsrc + 1));
+			}
+
+			ysrc++;
+			uvsrc += 2;
+		}
+		/* Rewind u and v for next line */
+		if (!(i&1))
+			uvsrc -= width;
+	}
+}
+
+
 void v4lconvert_yuyv_to_bgr24(const unsigned char *src, unsigned char *dest,
 		int width, int height, int stride)
 {

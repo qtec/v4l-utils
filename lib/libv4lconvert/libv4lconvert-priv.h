@@ -120,6 +120,9 @@ void v4lconvert_yuv420_to_rgb24(const unsigned char *src, unsigned char *dst,
 void v4lconvert_yuv420_to_bgr24(const unsigned char *src, unsigned char *dst,
 		int width, int height, int yvu);
 
+void v4lconvert_nv12_to_rgb24(const unsigned char *src, unsigned char *dest,
+		int width, int height, int bgr);
+
 void v4lconvert_yuyv_to_rgbX(const unsigned char *src, unsigned char *dst,
 		int width, int height, int stride, int Xout);
 
