@@ -1,7 +1,7 @@
 #include <jpeglib.h>
 
 void
-jpeg_mem_src (j_decompress_ptr cinfo, unsigned char * buffer,
+jpeg_mem_src (j_decompress_ptr cinfo, const unsigned char * buffer,
 	unsigned long bufsize);
 
 void
