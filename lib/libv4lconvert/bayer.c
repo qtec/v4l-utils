@@ -631,3 +631,18 @@ void v4lconvert_bayer_to_yuv420(const unsigned char *bayer, unsigned char *yuv,
 	v4lconvert_border_bayer_line_to_y(bayer + stride, bayer, ydst, width,
 			!start_with_green, !blue_line);
 }
+
+void v4lconvert_bayer10p_to_bayer8(unsigned char *bayer10p,
+		unsigned char *bayer8, int width, int height)
+{
+	long i, len = width * height;
+	uint32_t *src, *dst;
+
+	src = (uint32_t *)bayer10p;
+	dst = (uint32_t *)bayer8;
+	for (i = 0; i < len ; i += 4) {
+		*dst = *src;
+		dst ++;
+		src = (uint32_t *)(((uint8_t *)src) + 5);
+	}
+}
